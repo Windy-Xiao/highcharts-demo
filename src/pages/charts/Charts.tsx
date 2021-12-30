@@ -2,6 +2,8 @@
 /* eslint-disable */
 import React, { useEffect } from "react";
 import Highcharts, { extend, Options, WrapProceedFunction } from "highcharts";
+import HC from "highcharts-rounded-corners";
+HC(Highcharts);
 
 const options: Options = {
   title: {
@@ -45,7 +47,7 @@ const options: Options = {
     {
       type: "column",
       name: "Money in",
-      borderRadius: 4,
+      // borderRadius: 4,
       color: "#eee",
       data: [1, 2, 3, 4, 5, { y: 6, color: "#38d200" }],
       showInLegend: false,
@@ -53,7 +55,7 @@ const options: Options = {
     {
       type: "column",
       name: "Money out",
-      borderRadius: 4,
+      // borderRadius: 4,
       color: "#dfdfdf",
       data: [3, 5, 6, 1, 6, { y: 9, color: "#0f7aed" }],
       showInLegend: false,
@@ -94,18 +96,14 @@ const options: Options = {
   exporting: {},
   plotOptions: {
     series: {
+      borderRadiusTopLeft: "50%",
+      borderRadiusTopRight: "50%",
       states: {
         hover: {
           enabled: false,
         },
       },
       stickyTracking: false,
-      // enableMouseTracking:false,
-      // states:{
-      //   hover:{
-      //     enabled:false
-      //   }
-      // },
       point: {
         events: {
           click: function (e) {
@@ -139,7 +137,7 @@ const options: Options = {
   },
 };
 
-const ChartsDemo = () => {
+const Charts = () => {
   // rewrite highcharts methods for tooltip show
   Highcharts.wrap(Highcharts.Tooltip.prototype, "hide", function (proceed) {});
   Highcharts.wrap(Highcharts.Tooltip.prototype, "refresh", function (
@@ -236,4 +234,4 @@ const ChartsDemo = () => {
     <div id={"container"} style={{ width: "300px", height: "240px" }}></div>
   );
 };
-export default ChartsDemo;
+export default Charts;
