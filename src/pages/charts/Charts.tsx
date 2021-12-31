@@ -1,9 +1,52 @@
 // @ts-nocheck
 /* eslint-disable */
 import React, { useEffect } from "react";
-import Highcharts, { extend, Options, WrapProceedFunction } from "highcharts";
+import Highcharts, {
+  extend,
+  Options,
+  Series,
+  WrapProceedFunction,
+} from "highcharts";
 import HC from "highcharts-rounded-corners";
 HC(Highcharts);
+
+interface Colors {
+  active: string;
+  inactive: string;
+}
+const changeColor = (
+  currentSeries: Series,
+  currentIndex: number,
+  colors: Colors
+): void => {
+  currentSeries.data.map((item, index) =>
+    currentIndex === index
+      ? (item.color = colors.active)
+      : (item.color = colors.inactive)
+  );
+  currentSeries.render();
+};
+
+const handleClick = (
+  chart: Highcharts.Chart,
+  currentIndex: number,
+  event: Highcharts.PointClickEventObject
+): void => {
+  const series = chart.series;
+  const tooltip = chart.tooltip;
+
+  changeColor(series[0], currentIndex, { active: "#38d200", inactive: "#eee" });
+  changeColor(series[1], currentIndex, {
+    active: "#0f7aed",
+    inactive: "#dfdfdf",
+  });
+
+  tooltip.refresh(
+    [series[0].points[currentIndex], series[1].points[currentIndex]],
+    event,
+    true
+  );
+};
 
 const options: Options = {
   title: {
@@ -21,7 +64,6 @@ const options: Options = {
     },
     categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     type: "category",
-    labels: {},
   },
   yAxis: {
     title: {
@@ -47,7 +89,6 @@ const options: Options = {
     {
       type: "column",
       name: "Money in",
-      // borderRadius: 4,
       color: "#eee",
       data: [1, 2, 3, 4, 5, { y: 6, color: "#38d200" }],
       showInLegend: false,
@@ -55,7 +96,6 @@ const options: Options = {
     {
       type: "column",
       name: "Money out",
-      // borderRadius: 4,
       color: "#dfdfdf",
       data: [3, 5, 6, 1, 6, { y: 9, color: "#0f7aed" }],
       showInLegend: false,
@@ -107,26 +147,7 @@ const options: Options = {
       point: {
         events: {
           click: function (e) {
-            this.series.chart.series[0].data.map((item, index) =>
-              e.point.index === index
-                ? (item.color = "#38d200")
-                : (item.color = "#eee")
-            );
-            this.series.chart.series[0].render();
-            this.series.chart.series[1].data.map((item, index) =>
-              e.point.index === index
-                ? (item.color = "#0f7aed")
-                : (item.color = "#dfdfdf")
-            );
-            this.series.chart.series[1].render();
-            this.series.chart.tooltip.refresh(
-              [
-                this.series.chart.series[0].points[e.point.index],
-                this.series.chart.series[1].points[e.point.index],
-              ],
-              e,
-              true
-            );
+            handleClick(this.series.chart, e.point.index, e);
           },
         },
       },
@@ -221,13 +242,7 @@ const Charts = () => {
       index
     ) {
       label.style.cursor = "pointer";
-      label.onclick = () => {
-        chart.tooltip.refresh(
-          [chart.series[0].points[index], chart.series[1].points[index]],
-          label,
-          true
-        );
-      };
+      label.onclick = () => handleClick(chart, index, label);
     });
   });
   return (
