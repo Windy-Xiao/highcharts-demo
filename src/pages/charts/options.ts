@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable */
 import { Options } from "highcharts";
-import { handleClick } from "./Charts";
+import { handleClick } from "./utils";
 
 export const options: Options = {
   title: {
